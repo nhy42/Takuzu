@@ -238,7 +238,7 @@ int isValid(SIZEDGRID usergrid, int x, int y, int val, int showErr) {
     notSameColOrLines = checkSimilarLinesOrColumns(usergrid, x, y, val);
     if (showErr) {
         if (!zeroEqualOne) {
-            printf("Le nombre de zero par ligne/colonne doit être egal au nombre de un\n");
+            printf("Le nombre de zero par ligne/colonne doit etre egal au nombre de un\n");
         } else if (!twoSameMax) {
             printf("Maximum deux memes valeurs a la suite\n");
         } else if (!notSameColOrLines) {
@@ -265,11 +265,13 @@ int giveHint(SIZEDGRID usergrid, int * x, int * y, int * val) {
         for (int j = 0; j < usergrid.size; ++j) {
             if (checkIfUnderIsTheSame(usergrid, i, j)) {
                 if (placeHintUnder(usergrid, i, j, x, y, val)) {
+                    //printf("a%d, %d\n", *x, *y);
                     return 1;
                 }
             }
             if (checkIfRightIsTheSame(usergrid, i, j)) {
                 if (placeHintRight(usergrid, i, j, x, y, val)) {
+                    //printf("b%d, %d\n", *x, *y);
                     return 1;
                 }
             }
@@ -277,46 +279,58 @@ int giveHint(SIZEDGRID usergrid, int * x, int * y, int * val) {
     }
 
     // second indice, le chiffre entre deux chiffres
-    /*
+
     for (int i = 0; i < usergrid.size; ++i) {
         for (int j = 0; j < usergrid.size; ++j) {
             if (checkIfSpaceBetweenTwoSameUnder(usergrid, i, j)) {
-                placeHintInSpace(usergrid, i+1, j, x, y, val);
+                placeHintInSpace(i + 1, j, usergrid.grid[i][j], x, y, val);
+                //printf("c%d, %d\n", *x, *y);
                 return 1;
             }
             if (checkIfSpaceBetweenTwoSameRight(usergrid, i, j)) {
-                placeHintInSpace(usergrid, i, j+1, x, y, val);
+                placeHintInSpace(i, j + 1, usergrid.grid[i][j], x, y, val);
+                //printf("d%d, %d\n", *x, *y);
                 return 1;
             }
         }
-    }*/
+    }
+    /**/
     return 0;
 }
 
 int checkIfUnderIsTheSame(SIZEDGRID usergrid, int x, int y) {
-    if (x + 1 < usergrid.size) {
-        return usergrid.grid[x][y] == usergrid.grid[x + 1][y] ? 1 : 0;
+    if (x + 1 < usergrid.size && usergrid.grid[x][y] != -1) {
+        if (usergrid.grid[x][y] == usergrid.grid[x + 1][y]) {
+            return 1;
+        }
     }
     return 0;
 }
 
 int checkIfRightIsTheSame(SIZEDGRID usergrid, int x, int y) {
-    if (y + 1 < usergrid.size) {
-        return usergrid.grid[x][y] == usergrid.grid[x][y+1] ? 1 : 0;
+    if (y + 1 < usergrid.size && usergrid.grid[x][y] != -1) {
+        if (usergrid.grid[x][y] == usergrid.grid[x][y+1]) {
+            return 1;
+        }
     }
     return 0;
 }
 
 int placeHintUnder(SIZEDGRID usergrid, int x, int y, int * outX, int * outY, int * val) {
+    //up
     if (x-1 >= 0) {
         if (usergrid.grid[x-1][y] == -1) {
+            //printf("t1%d, %d, %d\n", usergrid.grid[x-1][y], x, y);
             *outX = x-1;
             *outY = y;
             *val = usergrid.grid[x][y] == 1 ? 0 : 1;
             return 1;
         }
-    } else if (x+2 < usergrid.size) {
+    }
+    //down
+    if (x+2 < usergrid.size) {
         if (usergrid.grid[x+2][y] == -1) {
+            //printf("t2%d, %d, %d\n", usergrid.grid[x+2][y], x, y);
             *outX = x+2;
             *outY = y;
             *val = usergrid.grid[x][y] == 1 ? 0 : 1;
@@ -327,6 +341,7 @@ int placeHintUnder(SIZEDGRID usergrid, int x, int y, int * outX, int * outY, int
 }
 
 int placeHintRight(SIZEDGRID usergrid, int x, int y, int * outX, int * outY, int * val) {
+    // left
     if (y-1 >= 0) {
         if (usergrid.grid[x][y-1] == -1) {
             *outX = x;
@@ -334,7 +349,9 @@ int placeHintRight(SIZEDGRID usergrid, int x, int y, int * outX, int * outY, int
             *val = usergrid.grid[x][y] == 1 ? 0 : 1;
             return 1;
         }
-    } else if (y+2 < usergrid.size) {
+    }
+    // right
+    if (y+2 < usergrid.size) {
         if (usergrid.grid[x][y+2] == -1) {
             *outX = x;
             *outY = y+2;
@@ -346,7 +363,7 @@ int placeHintRight(SIZEDGRID usergrid, int x, int y, int * outX, int * outY, int
 }
 
 int checkIfSpaceBetweenTwoSameUnder(SIZEDGRID usergrid, int x, int y) {
-    if (x+2 < usergrid.size) {
+    if (x+2 < usergrid.size && usergrid.grid[x][y] != -1) {
         if (usergrid.grid[x][y] == usergrid.grid[x+2][y] && usergrid.grid[x+1][y] == -1) {
             return 1;
         }
@@ -363,8 +380,8 @@ int checkIfSpaceBetweenTwoSameRight(SIZEDGRID usergrid, int x, int y) {
     return 0;
 }
 
-void placeHintInSpace(SIZEDGRID usergrid, int x, int y, int * outX, int * outY, int * val) {
+void placeHintInSpace(int x, int y, int baseVal, int *outX, int *outY, int *val) {
     *outX = x;
     *outY = y;
-    *val = usergrid.grid[x][y] == 1 ? 0 : 1;
+    *val = baseVal == 1 ? 0 : 1;
 }

@@ -48,6 +48,7 @@ void pickCoords(int* x, int* y, int size) {
 int getSize() {
     printf("Quelle taille de grille souhaitez vous ?\n1) 4\n2) 8\n3) 16\n> ");
     int answer = -1;
+    getchar();
     while ((answer > 4 || answer < 1) && answer != 8 && answer != 16) {
         // ^ comme ca on accepte aussi 4, 8 et 16 (jme suis fait avoir en faisant les tests, donc BON)
         printf("\n1) 4\n2) 8\n3) 16\n> ");
@@ -118,7 +119,7 @@ void play() {
     SIZEDGRID mask = getMask(size);
     printf("Voici le masque :\n");
     printGrid(mask, mask, 1);
-    int life = 3, end = 0;
+    int life = 3, end = 0; // todo : changer le nb de vies
 
     SIZEDGRID usergrid = allocGrid(size);
     fillWithInt(&usergrid, -1);
@@ -145,7 +146,7 @@ void play() {
             if (giveHint(usergrid, &x, &y, &val)) {
                 printf("Et pourquoi pas mettre un petit %d en (%d, %d)\n", val, x, y);
             } else {
-                printf("Il n'est pas possible de fournir un indice");
+                printf("Il n'est pas possible de fournir un indice\n");
             }
             life--;
         }

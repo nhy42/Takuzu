@@ -32,6 +32,6 @@ int placeHintUnder(SIZEDGRID usergrid, int x, int y, int * outX, int * outY, int
 int placeHintRight(SIZEDGRID usergrid, int x, int y, int * outX, int * outY, int * val);
 int checkIfSpaceBetweenTwoSameUnder(SIZEDGRID usergrid, int x, int y);
 int checkIfSpaceBetweenTwoSameRight(SIZEDGRID usergrid, int x, int y);
-void placeHintInSpace(SIZEDGRID usergrid, int x, int y, int * outX, int * outY, int * val);
+void placeHintInSpace(int x, int y, int baseVal, int *outX, int *outY, int *val);
 
 #endif //TAKUZU_GRID_H
