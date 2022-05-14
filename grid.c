@@ -386,7 +386,7 @@ int checkIfSpaceBetweenTwoSameUnder(SIZEDGRID usergrid, int x, int y) {
 }
 
 int checkIfSpaceBetweenTwoSameRight(SIZEDGRID usergrid, int x, int y) {
-    if (y+2 < usergrid.size) {
+    if (y+2 < usergrid.size && usergrid.grid[x][y] != -1) {
         if (usergrid.grid[x][y] == usergrid.grid[x][y+2] && usergrid.grid[x][y+1] == -1) {
             return 1;
         }
