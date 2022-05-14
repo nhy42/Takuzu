@@ -26,6 +26,7 @@ int isValid(SIZEDGRID usergrid, int x, int y, int val, int showErr);
 int checkEnded(SIZEDGRID usergrid);
 
 int giveHint(SIZEDGRID usergrid, int * x, int * y, int * val);
+
 int checkIfUnderIsTheSame(SIZEDGRID usergrid, int x, int y);
 int checkIfRightIsTheSame(SIZEDGRID usergrid, int x, int y);
 int placeHintUnder(SIZEDGRID usergrid, int x, int y, int * outX, int * outY, int * val);
