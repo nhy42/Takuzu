@@ -3,6 +3,7 @@
 //
 #include "grid.h"
 #include "interaction.h"
+#include "autosolve.h"
 #include <stdio.h>
 #include <stdlib.h>
 
