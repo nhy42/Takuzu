@@ -295,6 +295,20 @@ int giveHint(SIZEDGRID usergrid, int * x, int * y, int * val) {
         }
     }
     /**/
+
+    // indice 3 : les lignes avec deux trous, différentes
+    for (int i = 0; i < usergrid.size; ++i) {
+        if (checkIfColumnHave2Empty(usergrid, i)) {
+            if (placeHintIfSameColumn(usergrid, i, x, y, val)) {
+                return 1;
+            }
+        }
+        if (checkIfLineHave2Empty(usergrid, i)) {
+            if (placeHintIfSameLine(usergrid, i, x, y, val)) {
+                return 1;
+            }
+        }
+    }
     return 0;
 }
 
@@ -384,4 +398,90 @@ void placeHintInSpace(int x, int y, int baseVal, int *outX, int *outY, int *val)
     *outX = x;
     *outY = y;
     *val = baseVal == 1 ? 0 : 1;
+}
+
+int checkIfLineHave2Empty(SIZEDGRID usergrid, int lineNum) {
+    int minusOneCounter = 0;
+    for (int j = 0; j < usergrid.size; ++j) {
+        if (usergrid.grid[lineNum][j] == -1) {
+            minusOneCounter++;
+        }
+    }
+    return minusOneCounter == 2 ? 1 : 0;
+}
+
+int checkIfColumnHave2Empty(SIZEDGRID usergrid, int columnNum) {
+    int minusOneCounter = 0;
+    for (int j = 0; j < usergrid.size; ++j) {
+        if (usergrid.grid[j][columnNum] == -1) {
+            minusOneCounter++;
+        }
+    }
+    return minusOneCounter == 2 ? 1 : 0;
+}
+
+int placeHintIfSameLine(SIZEDGRID usergrid, int lineNum, int * x, int * y, int * val) {
+    for (int i = 0; i < usergrid.size; ++i) {
+        if (isLineFull(usergrid, lineNum)) {  // elimine automatiquement l'actuelle
+            int similar = 1;
+            for (int j = 0; j < usergrid.size; ++j) {
+                // bancale la condition non ?
+                if (usergrid.grid[lineNum][j] != usergrid.grid[i][j] && usergrid.grid[lineNum][j] != -1) {
+                    similar = 0;
+                }
+            }
+            if (similar) {
+                for (int j = 0; j < usergrid.size; ++j) {
+                    if (usergrid.grid[lineNum][j] == -1) {
+                        *x = lineNum;
+                        *y = j;
+                        *val = usergrid.grid[i][j];
+                    }
+                }
+            }
+        }
+    }
+    return 0;
+}
+
+int placeHintIfSameColumn(SIZEDGRID usergrid, int columnNum, int * x, int * y, int * val) {
+    for (int i = 0; i < usergrid.size; ++i) {
+        if (isColumnFull(usergrid, columnNum)) {  // elimine automatiquement l'actuelle
+            int similar = 1;
+            for (int j = 0; j < usergrid.size; ++j) {
+                // bancale la condition non ?
+                if (usergrid.grid[j][columnNum] != usergrid.grid[i][j] && usergrid.grid[j][columnNum] != -1) {
+                    similar = 0;
+                }
+            }
+            if (similar) {
+                for (int j = 0; j < usergrid.size; ++j) {
+                    if (usergrid.grid[j][columnNum] == -1) {
+                        *x = j;
+                        *y = columnNum;
+                        *val = usergrid.grid[j][i];
+                    }
+                }
+            }
+        }
+    }
+    return 0;
+}
+
+int isLineFull(SIZEDGRID usergrid, int lineNum) {
+    for (int i = 0; i < usergrid.size; ++i) {
+        if (usergrid.grid[lineNum][i] == -1) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int isColumnFull(SIZEDGRID usergrid, int columnNum) {
+    for (int i = 0; i < usergrid.size; ++i) {
+        if (usergrid.grid[columnNum][i] == -1) {
+            return 0;
+        }
+    }
+    return 1;
 }
