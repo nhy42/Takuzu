@@ -173,25 +173,26 @@ void play() {
 }
 
 void autoSolveInterface() {
-    SIZEDGRID grid = getGrid4();
-    SIZEDGRID mask = getMask4();//genMask(8);
-    SIZEDGRID usergrid = allocGrid(4);
+    SIZEDGRID grid = getGrid8();//getGrid4();//
+    SIZEDGRID mask = genMask(8);//getMask4();//
+    SIZEDGRID usergrid = allocGrid(8);//allocGrid(4);//
     fillWithInt(&usergrid, -1);
     addOneOnTwoUsingMaks(grid, &usergrid, mask);
-    printGrid(usergrid, mask, 1);/*
+    printGrid(usergrid, mask, 1);
 
     MOVE * moveList = NULL;
 
     if (recursiveSolve(&usergrid, &moveList)) {
+        printf("ck\n");
         printf("PTDR QUOI\n");
     } else {
         printf("aww, not wowwkin\n");
     }
 
     printf("Wait what ca a marché !?\n");
-    printGrid(usergrid, mask, 1);*/
+    printGrid(usergrid, mask, 1);/**/
 
-
+/*
     MOVE * moveList = NULL;
     moveList = newMoveWithValues(1, 1, 0, 0, moveList);
     moveList = newMoveWithValues(1, 1, 0, 0, moveList);
@@ -208,7 +209,7 @@ void autoSolveInterface() {
         printf("%d\n", temp);
         temp = temp->previous;
     } while (temp->previous != NULL);
-    /**/
+    */
     /*
     int x, y, val = 0, e;
     getNextCaseToDo(usergrid, 0,&x, &y, &val);
