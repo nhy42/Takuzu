@@ -1,0 +1,1 @@
+Lancer Takuzu.exe (sur Windows)
