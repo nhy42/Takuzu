@@ -10,11 +10,17 @@
 void printGrid(SIZEDGRID grid, SIZEDGRID mask, int ignoreMask) { // si ingoreMask = 1, passer n'importe quoi en masque
     printf("      ");
     for (int i = 0; i < grid.size; i++) {
-        printf("%c  ", i + '0');
+        printf("%d ", i);
+        if (i < 10) {
+            printf(" ");
+        }
     }
     printf("\n\n");
     for (int i = 0; i < grid.size; i++) {
-        printf("%d     ", i);
+        printf("%d    ", i);
+        if (i < 10) {
+            printf(" ");
+        }
         for (int j = 0; j < grid.size; j++) {
             if (mask.grid[i][j] == 1 || ignoreMask) {
                 printf("%c  ", grid.grid[i][j] == -1 ? '_' : grid.grid[i][j] + '0');
@@ -85,7 +91,7 @@ SIZEDGRID getMask(int size) {
     printf("Voulez-vous :");
     int answer = -1;
     while (answer > 3 || answer < 1) {
-        printf("\n1) Générer un masque\n2) Saisir un masque\n3) Jouer\n> ");
+        printf("\n1) Generer un masque\n2) Saisir un masque\n3) Jouer\n> ");
         scanf("%d", &answer);
     }
     if (answer == 1 || answer == 3) {
@@ -110,12 +116,10 @@ void play() {
     } else if (size == 8) {
         grid = getGrid8();
     } else {
-        printf("Pas encore implémenté\nSize = 8\n");
-        size = 8;
-        grid = getGrid8();
+        //printf("Pas encore implémenté\nSize = 8\n");
+        size = 16;
+        grid = getGrid16();
     }
-
-    // isValid(grid, 0, 3, 1, 0) ? printf("valid") : printf("not");
 
     SIZEDGRID mask = getMask(size);
     printf("Voici le masque :\n");
@@ -138,18 +142,19 @@ void play() {
             pickCoords(&x, &y, size);
         }
         val = getValue(x, y);
-        if (isValid(usergrid, x, y, val, 1)) {
+        if (isNewValValid(usergrid, x, y, val, 1)) {
             usergrid.grid[x][y] = val;
             if (checkEnded(usergrid)) {
                 end = 1;
             }
         } else {
+            life--;
+            printf("Il vous reste %d vies\n", life);
             if (giveHint(usergrid, &x, &y, &val)) {
                 printf("Et pourquoi pas mettre un petit %d en (%d, %d)\n", val, x, y);
             } else {
                 printf("Il n'est pas possible de fournir un indice\n");
             }
-            life--;
         }
     }
 
@@ -159,7 +164,7 @@ void play() {
         printf("Perdu !\nLa grille etait :\n");
         printGrid(grid, grid, 1);
     } else {
-        printf("Felicitations ! Vous avez termine la grille\n");
+        printf("Felicitations ! Vous avez fini la grille !\n");
     }
     // EH SALUT TOI, FREE TA MEMOIRE
     freeGrid(&usergrid);
@@ -167,8 +172,51 @@ void play() {
     freeGrid(&grid);
 }
 
-
 void autoSolveInterface() {
+    SIZEDGRID grid = getGrid4();
+    SIZEDGRID mask = getMask4();//genMask(8);
+    SIZEDGRID usergrid = allocGrid(4);
+    fillWithInt(&usergrid, -1);
+    addOneOnTwoUsingMaks(grid, &usergrid, mask);
+    printGrid(usergrid, mask, 1);/*
+
+    MOVE * moveList = NULL;
+
+    if (recursiveSolve(&usergrid, &moveList)) {
+        printf("PTDR QUOI\n");
+    } else {
+        printf("aww, not wowwkin\n");
+    }
+
+    printf("Wait what ca a marché !?\n");
+    printGrid(usergrid, mask, 1);*/
+
+
+    MOVE * moveList = NULL;
+    moveList = newMoveWithValues(1, 1, 0, 0, moveList);
+    moveList = newMoveWithValues(1, 1, 0, 0, moveList);
+    moveList = newMoveWithValues(1, 1, 0, 0, moveList);
+    moveList = newMoveWithValues(1, 1, 1, 0, moveList);
+    moveList = newMoveWithValues(1, 1, 0, 0, moveList);
+    moveList = newMoveWithValues(1, 1, 0, 0, moveList);
+    printf("rahoue");
+    rollbackGridToHypothesis(&usergrid, &moveList);
+    printf("ono");
+
+    MOVE * temp = moveList;
+    do {
+        printf("%d\n", temp);
+        temp = temp->previous;
+    } while (temp->previous != NULL);
+    /**/
+    /*
+    int x, y, val = 0, e;
+    getNextCaseToDo(usergrid, 0,&x, &y, &val);
+    printf("%d, %d : %d\n", x, y, val);
+    getNextCaseToDo(usergrid, 1, &x, &y, &val);
+    printf("%d, %d : %d\n", x, y, val);
+    getNextCaseToDo(usergrid, 2, &x, &y, &val);
+    printf("%d, %d : %d\n", x, y, val);*/
 
 }
 
@@ -176,12 +224,11 @@ void genGridInterface() {
 
 }
 
-
 int mainMenu() {
     printf("Que souhaitez vous faire ?\n");
     int answer = -1;
     while (answer > 4 || answer < 1) {
-        printf("1) Jouer\n2) Résoudre automatiquement une grille\n3) Générer une grille\n4) Quitter\n> ");
+        printf("1) Jouer\n2) Resoudre automatiquement une grille\n3) Generer une grille\n4) Quitter\n> ");
         scanf("%d", &answer);
     }
     getchar(); // marche meme pas :(

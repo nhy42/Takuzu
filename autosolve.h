@@ -3,6 +3,16 @@
 
 #include "grid.h"
 
+struct move {
+    int x;
+    int y;
+    int hypothesis;  // 1 or 0
+    int changedOnce; // 1 or 0 // not used
+    struct move * previous;
+};
+typedef struct move MOVE;
+//typedef struct MOVE * MOVESTACK;  //bof
+
 int giveHint(SIZEDGRID usergrid, int * x, int * y, int * val);
 
 int checkIfUnderIsTheSame(SIZEDGRID usergrid, int x, int y);
@@ -21,5 +31,12 @@ int placeHintIfSameColumn(SIZEDGRID usergrid, int columnNum, int * x, int * y, i
 int isLineFull(SIZEDGRID usergrid, int lineNum);
 int isColumnFull(SIZEDGRID usergrid, int columnNum);
 
+MOVE * allocMove();
+void freeMove(MOVE * moveToFree);
+MOVE * newMoveWithValues(int x, int y, int hypothesis, int changedOnce, MOVE * previous);
+
+void rollbackGridToHypothesis(SIZEDGRID * grid, MOVE ** moveList);
+int getNextCaseToDo(SIZEDGRID usergrid, int rank, int * x, int * y, int * val);
+int recursiveSolve(SIZEDGRID * usergrid, MOVE ** moveList);
 
 #endif //TAKUZU_AUTOSOLVE_H

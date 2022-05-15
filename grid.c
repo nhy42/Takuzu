@@ -10,7 +10,7 @@ SIZEDGRID genMask(int size) {
     time_t t;
     srand((unsigned) time(&t));
     SIZEDGRID mask = allocGrid(size);
-    for (int i = 0; i < size*size/2; i++) {
+    for (int i = 0; i < size*size/3; i++) {
         int x, y;
         x = rand() % size;
         y = rand() % size;
@@ -76,6 +76,13 @@ int** convertToTakuzu16(int tab8[16][16]) {
 SIZEDGRID getGrid4() {
     SIZEDGRID grid;
     grid.grid = convertToTakuzu4(exampleGrid4);
+    grid.size = 4;
+    return grid;
+}
+
+SIZEDGRID getMask4() {  // for debuging purposes
+    SIZEDGRID grid;
+    grid.grid = convertToTakuzu4(exampleMask4);
     grid.size = 4;
     return grid;
 }
@@ -235,7 +242,7 @@ int checkSimilarLinesOrColumns(SIZEDGRID usergrid, int x, int y, int val) {
     return notSameColOrLines;
 }
 
-int isValid(SIZEDGRID usergrid, int x, int y, int val, int showErr) {
+int isNewValValid(SIZEDGRID usergrid, int x, int y, int val, int showErr) {
     int zeroEqualOne, twoSameMax, notSameColOrLines;
     // rule 1 : zeroEqualOne
     zeroEqualOne = checkZeroEqualOne(usergrid, x, y, val);
@@ -255,6 +262,26 @@ int isValid(SIZEDGRID usergrid, int x, int y, int val, int showErr) {
     return zeroEqualOne && twoSameMax && notSameColOrLines;
 }
 
+int isGridValid(SIZEDGRID usergrid) {
+    // tout ca c'est de l'opti, deux boucles for ca marche aussi
+    int i = 0, j = 0, found = 0;
+    while (i < usergrid.size && !found) {
+        while (j < usergrid.size && !found) {
+            if (usergrid.grid[i][j] != -1) {
+                found = 1;
+            }
+            j++;
+        }
+        i++;
+    }
+    i--; j--;
+    // fin de l'opti
+    if (!found) { // la grille est vide
+        return 1;
+    }
+    return isNewValValid(usergrid, i, j, usergrid.grid[i][j], 0);
+}
+
 int checkEnded(SIZEDGRID usergrid) {
     for (int i = 0; i < usergrid.size; ++i) {
         for (int j = 0; j < usergrid.size; ++j) {
@@ -264,4 +291,16 @@ int checkEnded(SIZEDGRID usergrid) {
         }
     }
     return 1;
+}
+
+int countEmpty(SIZEDGRID usergrid) {
+    int count = 0;
+    for (int i = 0; i < usergrid.size; ++i) {
+        for (int j = 0; j < usergrid.size; ++j) {
+            if (usergrid.grid[i][j] == -1) {
+                count++;
+            }
+        }
+    }
+    return count;
 }

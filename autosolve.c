@@ -1,5 +1,6 @@
 #include "grid.h"
 #include "autosolve.h"
+#include "interaction.h"
 
 
 int giveHint(SIZEDGRID usergrid, int * x, int * y, int * val) {
@@ -234,4 +235,98 @@ int isColumnFull(SIZEDGRID usergrid, int columnNum) {
         }
     }
     return 1;
+}
+
+MOVE * allocMove() {
+    return (MOVE *) malloc(sizeof(MOVE));
+}
+
+void freeMove(MOVE * moveToFree) {
+    if (moveToFree != NULL) {
+        free(moveToFree);
+    }
+}
+
+MOVE * newMoveWithValues(int x, int y, int hypothesis, int changedOnce, MOVE * previous) {
+    MOVE * newOne = allocMove();
+    newOne->x = x;
+    newOne->y = y;
+    newOne->hypothesis = hypothesis;
+    newOne->changedOnce = changedOnce;
+    newOne->previous = previous;
+    return newOne;
+}
+
+void rollbackGridToHypothesis(SIZEDGRID * usergrid, MOVE ** moveList) {
+    MOVE *temp = *moveList;
+    int stop = 0;
+    do {
+        *moveList = temp->previous;
+        usergrid->grid[temp->x][temp->y] = -1;
+        if (temp->hypothesis == 1 || *moveList == NULL) {
+            stop = 1;
+        }
+        freeMove(temp);
+        temp = *moveList;
+    } while (!stop);
+    *moveList = temp;
+}
+
+int getNextCaseToDo(SIZEDGRID usergrid, int rank, int * x, int * y, int * val) {
+    int count = 0;
+    for (int i = 0; i < usergrid.size; ++i) {
+        for (int j = 0; j < usergrid.size; ++j) {
+            if (usergrid.grid[i][j] == -1) {
+                if (rank / 2 == count / 2) {
+                    *x = i;
+                    *y = j;
+                    *val = rank % 2 == 0 ? (rand() % 2) : (*val == 1 ? 0 : 1);
+                    return 0;
+                }
+                count += 2;
+            }
+        }
+    }
+    return 1;
+}
+
+int recursiveSolve(SIZEDGRID * usergrid, MOVE ** moveList) {
+    int x, y, val;
+    while(giveHint(*usergrid, &x, &y, &val)) {
+        *moveList = newMoveWithValues(x, y, 0, 0, *moveList);
+        usergrid->grid[x][y] = val;
+    }
+    if (isGridValid(*usergrid)) {
+        if (checkEnded(*usergrid)) {
+            printf("AHHHHHH\n");
+            return 1;
+        } else {
+            int result;
+            int maxRank = countEmpty(*usergrid) * 2;  // total number of guesses to do
+            printf("|%d|", maxRank);
+            int rank = 0;
+            // x, y, et val sont des sortes de temp, donc pas besoin de les redéfinir ici
+            do {
+                if (maxRank) {
+                    printGrid(*usergrid, *usergrid, 1);
+                }
+                rollbackGridToHypothesis(usergrid, moveList);
+                getNextCaseToDo(*usergrid, rank, &x, &y, &val);
+                *moveList = newMoveWithValues(x, y, 1, 0, *moveList);
+                usergrid->grid[x][y] = val;
+                result = recursiveSolve(usergrid, moveList);
+                rank++;
+            } while (rank < maxRank && result == 0);
+            if (rank == maxRank) {
+                return 0;
+            } else if (result == 1) {
+                printf("bHHHHHH\n");
+                return 1;
+            } else {
+                printf("in recursiveSolve, do while broke");
+            }
+        }
+    } else {
+        return 0;
+    }
 }
