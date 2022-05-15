@@ -30,6 +30,10 @@ int placeHintIfSameLine(SIZEDGRID usergrid, int lineNum, int * x, int * y, int *
 int placeHintIfSameColumn(SIZEDGRID usergrid, int columnNum, int * x, int * y, int * val);
 int isLineFull(SIZEDGRID usergrid, int lineNum);
 int isColumnFull(SIZEDGRID usergrid, int columnNum);
+int countSymbolInLine(SIZEDGRID usergrid, int lineNum, int * zero, int * one, int * minusOne);
+int countSymbolInColumn(SIZEDGRID usergrid, int columnNum, int * zero, int * one, int * minusOne);
+int placeHintFillLine(SIZEDGRID usergrid, int lineNum, int * x, int * y);
+int placeHintFillColumn(SIZEDGRID usergrid, int columnNum, int * x, int * y);
 
 MOVE * allocMove();
 void freeMove(MOVE * moveToFree);

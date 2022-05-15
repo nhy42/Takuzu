@@ -41,7 +41,7 @@ int giveHint(SIZEDGRID usergrid, int * x, int * y, int * val) {
         }
     }
 
-    // indice 3 : les lignes avec deux trous, différentes
+    // troisieme indice : les lignes avec deux trous, différentes
 
     for (int i = 0; i < usergrid.size; ++i) {
         if (checkIfColumnHave2Empty(usergrid, i)) {
@@ -57,6 +57,24 @@ int giveHint(SIZEDGRID usergrid, int * x, int * y, int * val) {
             }
         }
     }
+
+    // quatrieme indice : si une ligne a deja size/2 d'une valeur dedans
+    int zero, one, minusOne;
+    for (int i = 0; i < usergrid.size; ++i) {
+        if (countSymbolInLine(usergrid, i, &zero, &one, &minusOne)) {
+            placeHintFillLine(usergrid, i, x, y);
+            *val = zero == usergrid.size / 2 ? 1 : 0;
+            //printf("g%d, %d\n", *x, *y);
+            return 1;
+        }
+        if (countSymbolInColumn(usergrid, i, &zero, &one, &minusOne)) {
+            placeHintFillColumn(usergrid, i, x, y);
+            *val = zero == usergrid.size / 2 ? 1 : 0;
+            //printf("h%d, %d, %d\n", *x, *y, i);
+            return 1;
+        }
+    }
+
     return 0;
 }
 
@@ -237,6 +255,59 @@ int isColumnFull(SIZEDGRID usergrid, int columnNum) {
     return 1;
 }
 
+int countSymbolInLine(SIZEDGRID usergrid, int lineNum, int * zero, int * one, int * minusOne) {
+    *zero = 0, *one = 0, *minusOne = 0;
+    for (int j = 0; j < usergrid.size; ++j) {
+        if (usergrid.grid[lineNum][j] == 0) {
+            *zero += 1;
+        } else if (usergrid.grid[lineNum][j] == 1) {
+            *one += 1;
+        } else if (usergrid.grid[lineNum][j] == -1) {
+            *minusOne += 1;
+        }
+    }
+    return (*zero == usergrid.size / 2 || *one == usergrid.size / 2) && *minusOne != 0;
+}
+
+int countSymbolInColumn(SIZEDGRID usergrid, int columnNum, int * zero, int * one, int * minusOne) {
+    *zero = 0, *one = 0, *minusOne = 0;
+    for (int j = 0; j < usergrid.size; ++j) {
+        if (usergrid.grid[j][columnNum] == 0) {
+            *zero += 1;
+        } else if (usergrid.grid[j][columnNum] == 1) {
+            *one += 1;
+        } else if (usergrid.grid[j][columnNum] == -1) {
+            *minusOne += 1;
+        }
+    }
+    return (*zero == usergrid.size / 2 || *one == usergrid.size / 2) && *minusOne != 0;
+}
+
+int placeHintFillLine(SIZEDGRID usergrid, int lineNum, int * x, int * y) {
+    for (int j = 0; j < usergrid.size; ++j) {
+        if (usergrid.grid[lineNum][j] == -1) {
+            *x = lineNum;
+            *y = j;
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int placeHintFillColumn(SIZEDGRID usergrid, int columnNum, int * x, int * y) {
+    for (int j = 0; j < usergrid.size; ++j) {
+        if (usergrid.grid[j][columnNum] == -1) {
+            *x = j;
+            *y = columnNum;
+            return 1;
+        }
+    }
+    return 0;
+}
+
+
+
+
 MOVE * allocMove() {
     return (MOVE *) malloc(sizeof(MOVE));
 }
@@ -298,13 +369,13 @@ int recursiveSolve(SIZEDGRID * usergrid, MOVE ** moveList) {
     }
     if (isGridValid(*usergrid)) {
         if (checkEnded(*usergrid)) {
-            printf("Go b");
+            //printf("Go b");
             return 1;
         } else {
             int result;
             int maxRank = countEmpty(*usergrid) * 2;  // total number of guesses to do
-            if (maxRank >= 28) {printf("|%d|\n", maxRank);}
-            if (maxRank == 28) { printGrid(*usergrid, *usergrid, 1);}
+            //if (maxRank >= 28) {printf("|%d|\n", maxRank);}
+            //if (maxRank == 28) { printGrid(*usergrid, *usergrid, 1);}
             int rank = 0;
             // x, y, et val sont des sortes de temp, donc pas besoin de les redéfinir ici
             do {
@@ -321,10 +392,11 @@ int recursiveSolve(SIZEDGRID * usergrid, MOVE ** moveList) {
             if (rank == maxRank) {
                 return 0;
             } else if (result == 1) {
-                printf("a");
+                //printf("a");
                 return 1;
             } else {
                 printf("in recursiveSolve, do while broke");
+                return 0;
             }
         }
     } else {
