@@ -1,13 +1,3 @@
-Annotations :
-Trois choses ont été écrites dans le rapport mais sont en fait erronées :
-- La résolution de 8x8 marche bien, les résolutions longues sont très peu courantes, et souvent on arrive à un résultat concluant (vous pouvez tester par vous-même)
-- La résolution de 16x16 fonctionne aussi, environ 1/4 est longue mais le reste du temps ça fonctionne bien (un exemple est en fin de document, mais ici aussi vous pouvez tester par vous-même)
-- la génération de grilles via notre algorithme de résolution fonctionne. On peut voir dans la démonstration que la 4x4 est aléatoire, et on ne le voit pas mais cela fonctionne aussi en 8x8 (pour tester, changer le 4 en 8 ligne 303 d'interaction.c). Le 16x16, comme écrit, fonctionnera avec un petit boost d'aléatoire initial, comme générer quelques lignes qui sont valides.
-
-
-=======================================================
-
-
 1) Jouer
 2) Resoudre automatiquement une grille
 3) Generer une grille
