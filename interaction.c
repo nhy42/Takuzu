@@ -300,7 +300,8 @@ void autoSolveInterface() {
 
 void genGridInterface() {
     printf("Ceci est simplement une demonstration de generation de grille 4x4 grace a notre algorithme de resolution.\n");
-    SIZEDGRID usergrid = allocGrid(16);
+    int size = getSize();
+    SIZEDGRID usergrid = allocGrid(size);
     fillWithInt(&usergrid, -1);
     MOVE * moveList = NULL;
     printf("Input :\n");
